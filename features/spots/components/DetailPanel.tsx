@@ -57,7 +57,7 @@ export default function DetailPanel({ spot, onClose }: DetailPanelProps) {
             <div className="flex flex-wrap gap-2">
               {spot.region && (
                 <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
-                  📍 {spot.region.region}
+                  📍 {spot.region.name}
                 </span>
               )}
               {spot.categories.map(cat => (

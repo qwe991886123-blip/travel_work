@@ -2,12 +2,8 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  fetchSpots,
-  fetchSpotById,
-  createSpot,
-  updateSpot,
-  deleteSpot,
-  toggleFavorite,
+  fetchSpots, fetchSpotById, createSpot, updateSpot,
+  softDeleteSpot, toggleFavorite,
 } from '@/services/spots'
 import type { SavedViewFilters, SpotFormData } from '@/types'
 
@@ -45,10 +41,10 @@ export function useUpdateSpot() {
   })
 }
 
-export function useDeleteSpot() {
+export function useSoftDeleteSpot() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => deleteSpot(id),
+    mutationFn: (id: string) => softDeleteSpot(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: [SPOTS_KEY] }),
   })
 }

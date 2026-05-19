@@ -78,7 +78,7 @@ export default function SpotPage({ params }: PageProps) {
           <div className="mt-4 flex flex-wrap gap-2">
             {spot.region && (
               <span className="rounded-full bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700">
-                📍 {spot.region.region}
+                📍 {spot.region.name}
               </span>
             )}
             {spot.categories.map(cat => (

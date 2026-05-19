@@ -1,23 +1,73 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchRegions, fetchCategories } from '@/services/regions'
 import {
-  fetchSavedViews,
-  createSavedView,
-  deleteSavedView,
-  updateSavedView,
-} from '@/services/savedViews'
+  fetchRegions, fetchCategories,
+  createRegion, updateRegion, deleteRegion,
+  createCategory, updateCategory, deleteCategory,
+} from '@/services/regions'
+import { fetchSavedViews, createSavedView, deleteSavedView, updateSavedView } from '@/services/savedViews'
 import { fetchComments, createComment, deleteComment } from '@/services/comments'
-import type { SavedViewFilters } from '@/types'
+import type { SavedViewFilters, RegionFormData, CategoryFormData } from '@/types'
 
-// ─── Regions & Categories ─────────────────────────────────────────────────────
+// ─── Regions ──────────────────────────────────────────────────────────────────
 export function useRegions() {
-  return useQuery({ queryKey: ['regions'], queryFn: fetchRegions, staleTime: Infinity })
+  return useQuery({ queryKey: ['regions'], queryFn: fetchRegions })
 }
 
+export function useCreateRegion() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: RegionFormData) => createRegion(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['regions'] }),
+  })
+}
+
+export function useUpdateRegion() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<RegionFormData> }) =>
+      updateRegion(id, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['regions'] }),
+  })
+}
+
+export function useDeleteRegion() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => deleteRegion(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['regions'] }),
+  })
+}
+
+// ─── Categories ───────────────────────────────────────────────────────────────
 export function useCategories() {
-  return useQuery({ queryKey: ['categories'], queryFn: fetchCategories, staleTime: Infinity })
+  return useQuery({ queryKey: ['categories'], queryFn: fetchCategories })
+}
+
+export function useCreateCategory() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: CategoryFormData) => createCategory(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
+  })
+}
+
+export function useUpdateCategory() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<CategoryFormData> }) =>
+      updateCategory(id, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
+  })
+}
+
+export function useDeleteCategory() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => deleteCategory(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
+  })
 }
 
 // ─── Saved Views ──────────────────────────────────────────────────────────────
@@ -37,13 +87,8 @@ export function useCreateSavedView() {
 export function useUpdateSavedView() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({
-      id,
-      updates,
-    }: {
-      id: string
-      updates: { name?: string; filters?: SavedViewFilters }
-    }) => updateSavedView(id, updates),
+    mutationFn: ({ id, updates }: { id: string; updates: { name?: string; filters?: SavedViewFilters } }) =>
+      updateSavedView(id, updates),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['saved-views'] }),
   })
 }
@@ -70,8 +115,7 @@ export function useCreateComment() {
   return useMutation({
     mutationFn: ({ spotId, content }: { spotId: string; content: string }) =>
       createComment(spotId, content),
-    onSuccess: (_data, { spotId }) =>
-      qc.invalidateQueries({ queryKey: ['comments', spotId] }),
+    onSuccess: (_data, { spotId }) => qc.invalidateQueries({ queryKey: ['comments', spotId] }),
   })
 }
 

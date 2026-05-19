@@ -12,20 +12,20 @@ export interface Database {
       regions: {
         Row: {
           id: string
-          country: string
-          region: string
+          name: string
+          country: string | null
           created_at: string
         }
         Insert: {
           id?: string
-          country: string
-          region: string
+          name: string
+          country?: string | null
           created_at?: string
         }
         Update: {
           id?: string
-          country?: string
-          region?: string
+          name?: string
+          country?: string | null
           created_at?: string
         }
         Relationships: []
@@ -62,6 +62,7 @@ export interface Database {
           cover_image: string | null
           notes: string | null
           is_favorite: boolean
+          deleted_at: string | null
           created_at: string
           updated_at: string
         }
@@ -75,6 +76,7 @@ export interface Database {
           cover_image?: string | null
           notes?: string | null
           is_favorite?: boolean
+          deleted_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -88,6 +90,7 @@ export interface Database {
           cover_image?: string | null
           notes?: string | null
           is_favorite?: boolean
+          deleted_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -189,7 +192,7 @@ export interface Database {
   }
 }
 
-// ─── Convenience row-type aliases ─────────────────────────────────────────────
+// ─── Row aliases ──────────────────────────────────────────────────────────────
 export type DbRegion       = Database['public']['Tables']['regions']['Row']
 export type DbCategory     = Database['public']['Tables']['categories']['Row']
 export type DbSpot         = Database['public']['Tables']['spots']['Row']
@@ -197,6 +200,11 @@ export type DbSpotCategory = Database['public']['Tables']['spot_categories']['Ro
 export type DbSavedView    = Database['public']['Tables']['saved_views']['Row']
 export type DbComment      = Database['public']['Tables']['comments']['Row']
 
+// ─── Insert / Update aliases ──────────────────────────────────────────────────
+export type DbRegionInsert       = Database['public']['Tables']['regions']['Insert']
+export type DbRegionUpdate       = Database['public']['Tables']['regions']['Update']
+export type DbCategoryInsert     = Database['public']['Tables']['categories']['Insert']
+export type DbCategoryUpdate     = Database['public']['Tables']['categories']['Update']
 export type DbSpotInsert         = Database['public']['Tables']['spots']['Insert']
 export type DbSpotUpdate         = Database['public']['Tables']['spots']['Update']
 export type DbSpotCategoryInsert = Database['public']['Tables']['spot_categories']['Insert']
