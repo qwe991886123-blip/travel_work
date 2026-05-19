@@ -215,7 +215,7 @@ export default function AddSpotModal({ onClose }: AddSpotModalProps) {
                   >
                     <option value="">Select Region</option>
                     {regions?.map(r => (
-                      <option key={r.id} value={r.id}>{r.region}</option>
+                      <option key={r.id} value={r.id}>{r.name}</option>
                     ))}
                   </select>
                 </div>
