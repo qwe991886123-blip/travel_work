@@ -2,9 +2,13 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  fetchSpots, fetchSpotById, createSpot, updateSpot,
-  softDeleteSpot, toggleFavorite,
-} from '@/services/spots'
+  fetchSpots,
+  fetchSpotById,
+  createSpot,
+  updateSpot,
+  softDeleteSpot,
+  toggleFavorite,
+} from '@/services/spot.service'
 import type { SavedViewFilters, SpotFormData } from '@/types'
 
 export const SPOTS_KEY = 'spots'

@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { X, Upload, Loader2, ExternalLink } from 'lucide-react'
 import { useRegions, useCategories } from '@/hooks/useData'
 import { useCreateSpot, useUpdateSpot } from '@/hooks/useSpots'
-import { uploadCoverImage } from '@/services/spots'
+import { uploadCoverImage } from '@/services/spot.service'
 import { cn } from '@/utils'
 import type { Spot } from '@/types'
 
