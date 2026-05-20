@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
+import { spotSchema, type SpotFormValues } from '@/schemas/spot.schema'
 import { X, Upload, Loader2, ExternalLink } from 'lucide-react'
 import { useRegions, useCategories } from '@/hooks/useData'
 import { useCreateSpot, useUpdateSpot } from '@/hooks/useSpots'
@@ -11,17 +11,6 @@ import { uploadCoverImage } from '@/services/spot.service'
 import { cn } from '@/utils'
 import type { Spot } from '@/types'
 
-const schema = z.object({
-  title:        z.string().min(1, 'Name is required'),
-  region_id:    z.string(),
-  category_ids: z.array(z.string()),
-  map_url:      z.string().refine(v => !v || v.startsWith('http'), { message: 'Must be a valid URL' }),
-  address:      z.string(),
-  description:  z.string(),
-  notes:        z.string(),
-})
-
-type FormValues = z.infer<typeof schema>
 
 interface SpotFormModalProps {
   /** When provided, we're editing an existing spot */
@@ -43,8 +32,8 @@ export default function SpotFormModal({ spot, onClose }: SpotFormModalProps) {
   const {
     register, handleSubmit, control, watch, reset,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+  } = useForm<SpotFormValues>({
+    resolver: zodResolver(spotSchema),
     defaultValues: {
       title:        spot?.title        ?? '',
       region_id:    spot?.region_id    ?? '',
@@ -98,7 +87,7 @@ export default function SpotFormModal({ spot, onClose }: SpotFormModalProps) {
     if (file) handleFileUpload(file)
   }, [handleFileUpload])
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: SpotFormValues) => {
     const payload = { ...values, cover_image: coverImage }
     if (isEditing && spot) {
       await updateSpot.mutateAsync({ id: spot.id, data: payload })
