@@ -28,7 +28,7 @@ export default function SettingsPage() {
               <ArrowLeft className="h-4 w-4" />
               Travel Workspace
             </Link>
-            <h1 className="text-sm font-semibold text-stone-700">Settings</h1>
+            <span className="text-sm text-stone-400">Settings</span>
             <div className="w-28" /> {/* spacer */}
           </div>
         </div>
@@ -38,7 +38,7 @@ export default function SettingsPage() {
         {/* Page title */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-stone-900">Settings</h1>
-          <p className="mt-2 text-stone-500">Manage the regions and categories used across your workspace.</p>
+          <p className="mt-2 text-sm text-stone-400">Manage the regions and categories used across your workspace.</p>
         </div>
 
         {/* Desktop: sidebar + content */}

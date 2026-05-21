@@ -14,6 +14,7 @@ import SpotFormModal from '@/features/spots/components/SpotFormModal'
 import DeleteConfirmDialog from '@/components/DeleteConfirmDialog'
 import SearchBar from '@/components/SearchBar'
 import { ToastContainer } from '@/components/Toast'
+import EmptyState from '@/components/ui/empty-state'
 
 export default function WorkspacePage() {
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null)
@@ -132,25 +133,25 @@ export default function WorkspacePage() {
                 <p className="mt-2 text-sm text-stone-500">Check your Supabase connection and environment variables.</p>
               </div>
             ) : !spots || spots.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-24 text-center">
-                <div className="text-6xl">🗺️</div>
-                <h2 className="mt-5 text-lg font-semibold text-stone-700">
-                  {search || filters.region ? 'No spots found' : 'No spots yet'}
-                </h2>
-                <p className="mt-2 text-sm text-stone-400">
-                  {search || filters.region
+              <EmptyState
+                icon="🗺️"
+                title={search || filters.region ? 'No spots found' : 'No spots yet'}
+                description={
+                  search || filters.region
                     ? 'Try a different search or filter.'
-                    : 'Start collecting places you want to visit.'}
-                </p>
-                {!search && !filters.region && (
-                  <button
-                    onClick={() => { setEditingSpot(undefined); setModalOpen(true) }}
-                    className="mt-6 flex items-center gap-2 rounded-2xl bg-stone-900 px-5 py-3 text-sm font-medium text-white transition hover:opacity-90">
-                    <Plus className="h-4 w-4" />
-                    Add your first spot
-                  </button>
-                )}
-              </div>
+                    : 'Start collecting places you want to visit.'
+                }
+                action={
+                  !search && !filters.region ? (
+                    <button
+                      onClick={() => { setEditingSpot(undefined); setModalOpen(true) }}
+                      className="flex items-center gap-2 rounded-2xl bg-stone-900 px-5 py-3 text-sm font-medium text-white transition hover:opacity-90">
+                      <Plus className="h-4 w-4" />
+                      Add your first spot
+                    </button>
+                  ) : undefined
+                }
+              />
             ) : (
               <div className={`grid grid-cols-1 gap-6 sm:grid-cols-2 ${panelOpen ? 'xl:grid-cols-2' : 'xl:grid-cols-4'} transition-all duration-300`}>
                 {spots.map(spot => (

@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import { Plus, Pencil, Trash2, Check, X, Loader2, Globe } from 'lucide-react'
 import { useRegions, useCreateRegion, useUpdateRegion, useDeleteRegion } from '@/hooks/useData'
+import SectionHeader from '@/components/ui/section-header'
+import { SkeletonList } from '@/components/ui/loading-skeleton'
+import { InlineEmptyState } from '@/components/ui/empty-state'
 import { useToast } from '@/hooks/useToast'
 import { ToastContainer } from '@/components/Toast'
 import DeleteConfirmDialog from '@/components/DeleteConfirmDialog'
@@ -106,22 +109,15 @@ export default function RegionManager() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
-          <Globe className="h-4 w-4 text-stone-600" />
-        </div>
-        <div>
-          <h2 className="text-base font-semibold text-stone-900">Regions</h2>
-          <p className="text-xs text-stone-400">{regions?.length ?? 0} 個地區</p>
-        </div>
-      </div>
+      <SectionHeader
+        icon={<Globe className="h-4 w-4 text-stone-600" />}
+        title="Regions"
+        count={regions?.length ?? 0}
+        countLabel="個地區"
+      />
 
       {isLoading ? (
-        <div className="space-y-2">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="h-11 animate-pulse rounded-2xl bg-stone-100" />
-          ))}
-        </div>
+        <SkeletonList rows={3} />
       ) : (
         <div className="space-y-6">
           {Object.entries(grouped).map(([country, items]) => (
@@ -172,9 +168,7 @@ export default function RegionManager() {
           ))}
 
           {(!regions || regions.length === 0) && (
-            <p className="rounded-2xl border border-dashed border-stone-200 py-8 text-center text-sm text-stone-400">
-              尚無地區。新增你的第一個旅遊地區。
-            </p>
+            <InlineEmptyState message="尚無地區。新增你的第一個旅遊地區。" />
           )}
         </div>
       )}

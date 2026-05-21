@@ -82,7 +82,7 @@ export default function SpotCard({ spot, isSelected, onSelect, onEdit, onDelete 
           <div className="flex flex-wrap gap-1.5">
             {spot.categories.map(cat => (
               <span key={cat.id}
-                className="rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-medium text-stone-600">
+                className="rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-medium text-stone-600 transition-colors">
                 {cat.icon && <span className="mr-1">{cat.icon}</span>}
                 {cat.name}
               </span>

@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import { Plus, Pencil, Trash2, Check, X, Loader2, Tag } from 'lucide-react'
 import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from '@/hooks/useData'
+import SectionHeader from '@/components/ui/section-header'
+import { SkeletonList } from '@/components/ui/loading-skeleton'
+import { InlineEmptyState } from '@/components/ui/empty-state'
 import { useToast } from '@/hooks/useToast'
 import { ToastContainer } from '@/components/Toast'
 import DeleteConfirmDialog from '@/components/DeleteConfirmDialog'
@@ -120,22 +123,15 @@ export default function CategoryManager() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
-          <Tag className="h-4 w-4 text-stone-600" />
-        </div>
-        <div>
-          <h2 className="text-base font-semibold text-stone-900">Categories</h2>
-          <p className="text-xs text-stone-400">{categories?.length ?? 0} 個分類</p>
-        </div>
-      </div>
+      <SectionHeader
+        icon={<Tag className="h-4 w-4 text-stone-600" />}
+        title="Categories"
+        count={categories?.length ?? 0}
+        countLabel="個分類"
+      />
 
       {isLoading ? (
-        <div className="space-y-2">
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-11 animate-pulse rounded-2xl bg-stone-100" />
-          ))}
-        </div>
+        <SkeletonList rows={4} />
       ) : (
         <div className="space-y-2">
           {(categories ?? []).map(cat => (
@@ -180,9 +176,7 @@ export default function CategoryManager() {
           ))}
 
           {(!categories || categories.length === 0) && (
-            <p className="rounded-2xl border border-dashed border-stone-200 py-8 text-center text-sm text-stone-400">
-              尚無分類。新增你的第一個分類。
-            </p>
+            <InlineEmptyState message="尚無分類。新增你的第一個分類。" />
           )}
         </div>
       )}

@@ -6,6 +6,8 @@ import { useComments, useCreateComment, useDeleteComment } from '@/hooks/useData
 import { useToast } from '@/hooks/useToast'
 import { ToastContainer } from '@/components/Toast'
 import { formatDate } from '@/utils'
+import { CommentSkeleton } from '@/components/ui/loading-skeleton'
+import { InlineEmptyState } from '@/components/ui/empty-state'
 
 interface CommentTimelineProps {
   spotId: string
@@ -86,15 +88,10 @@ export default function CommentTimeline({ spotId }: CommentTimelineProps) {
         </div>
       )}
 
-      {/* Loading skeleton */}
       {isLoading ? (
         <div className="space-y-3">
-          {[1, 2].map(i => (
-            <div key={i} className="rounded-2xl border border-stone-100 p-4">
-              <div className="h-3 w-24 animate-pulse rounded bg-stone-100" />
-              <div className="mt-2 h-10 w-full animate-pulse rounded bg-stone-100" />
-            </div>
-          ))}
+          <CommentSkeleton />
+          <CommentSkeleton />
         </div>
       ) : comments && comments.length > 0 ? (
         <div className="space-y-3">
@@ -115,9 +112,7 @@ export default function CommentTimeline({ spotId }: CommentTimelineProps) {
           ))}
         </div>
       ) : !isAdding ? (
-        <p className="rounded-2xl border border-dashed border-stone-200 p-6 text-center text-sm text-stone-400">
-          尚無記錄。點擊 Add 新增你的第一條筆記。
-        </p>
+        <InlineEmptyState message="尚無記錄。點擊 Add 新增你的第一條筆記。" />
       ) : null}
 
       <ToastContainer toasts={toasts} onDismiss={dismiss} />
