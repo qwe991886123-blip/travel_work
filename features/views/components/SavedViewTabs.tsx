@@ -44,7 +44,7 @@ export default function SavedViewTabs({ activeViewId, onViewChange }: SavedViewT
         aria-selected={activeViewId === null}
         onClick={() => onViewChange(null, {})}
         className={cn(
-          'flex flex-shrink-0 items-center gap-1.5 rounded-2xl border px-4 py-2 text-sm font-medium transition',
+          'flex flex-shrink-0 items-center gap-1.5 rounded-2xl border px-4 py-2 text-sm font-medium transition min-h-[40px]',
           activeViewId === null
             ? 'border-stone-900 bg-stone-900 text-white'
             : 'border-stone-300 bg-white text-stone-600 hover:bg-stone-50'
@@ -63,7 +63,7 @@ export default function SavedViewTabs({ activeViewId, onViewChange }: SavedViewT
               aria-selected={activeViewId === view.id}
               onClick={() => onViewChange(view.id, view.filters)}
               className={cn(
-                'flex items-center gap-1.5 rounded-2xl border px-4 py-2 pr-8 text-sm font-medium transition',
+                'flex items-center gap-1.5 rounded-2xl border px-4 py-2 pr-8 text-sm font-medium transition min-h-[40px]',
                 activeViewId === view.id
                   ? 'border-stone-900 bg-stone-900 text-white'
                   : 'border-stone-300 bg-white text-stone-600 hover:bg-stone-50'

@@ -114,10 +114,10 @@ export default function SpotFormModal({ spot, onClose, onSuccess, onError }: Spo
       role="dialog" aria-modal="true"
       aria-labelledby="spot-modal-title"
     >
-      <div className="flex max-h-[92vh] w-full max-w-xl flex-col overflow-hidden rounded-t-[32px] bg-white shadow-2xl sm:rounded-[32px]">
+      <div className="flex max-h-[88svh] w-full max-w-xl flex-col overflow-hidden rounded-t-[32px] bg-white shadow-2xl sm:max-h-[92vh] sm:rounded-[32px]">
 
         {/* Header */}
-        <div className="flex flex-shrink-0 items-start justify-between gap-4 px-8 pb-4 pt-8">
+        <div className="flex flex-shrink-0 items-start justify-between gap-4 px-5 pb-4 pt-6 sm:px-8 sm:pt-8">
           <div>
             <h2 id="spot-modal-title" className="text-2xl font-bold text-stone-900">
               {isEditing ? 'Edit Spot' : 'Add New Spot'}
@@ -132,7 +132,7 @@ export default function SpotFormModal({ spot, onClose, onSuccess, onError }: Spo
         </div>
 
         {/* Form */}
-        <div className="flex-1 overflow-y-auto px-8 pb-8">
+        <div className="flex-1 overflow-y-auto px-5 pb-6 sm:px-8 sm:pb-8">
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="space-y-5">
 
@@ -267,11 +267,11 @@ export default function SpotFormModal({ spot, onClose, onSuccess, onError }: Spo
             {/* Actions */}
             <div className="mt-8 flex items-center justify-end gap-3">
               <button type="button" onClick={onClose}
-                className="rounded-2xl border border-stone-200 px-5 py-3 text-sm font-medium text-stone-600 transition hover:bg-stone-50">
+                className="rounded-2xl border border-stone-200 px-5 py-3 text-sm font-medium text-stone-600 transition hover:bg-stone-50 min-h-[48px]">
                 Cancel
               </button>
               <button type="submit" disabled={isPending}
-                className="flex items-center gap-2 rounded-2xl bg-stone-900 px-5 py-3 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60">
+                className="flex items-center gap-2 rounded-2xl bg-stone-900 px-5 py-3 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60 min-h-[48px]">
                 {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
                 {isEditing ? 'Save Changes' : 'Save Spot'}
               </button>

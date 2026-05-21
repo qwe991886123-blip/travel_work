@@ -51,7 +51,7 @@ export default function CommentTimeline({ spotId }: CommentTimelineProps) {
         <h3 className="text-base font-semibold text-stone-900">Comments</h3>
         <button
           onClick={() => setIsAdding(v => !v)}
-          className="flex items-center gap-1 rounded-xl border border-stone-200 px-3 py-1.5 text-xs font-medium text-stone-500 transition hover:bg-stone-50 hover:text-stone-900"
+          className="flex items-center gap-1 rounded-xl border border-stone-200 px-3 py-1.5 text-xs font-medium text-stone-500 transition hover:bg-stone-50 hover:text-stone-900 min-h-[36px]"
           aria-expanded={isAdding}>
           <Plus className="h-3 w-3" />
           Add

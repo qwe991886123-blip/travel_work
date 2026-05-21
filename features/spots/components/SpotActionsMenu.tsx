@@ -120,7 +120,7 @@ export default function SpotActionsMenu({
         aria-label="More options"
         aria-haspopup="true"
         aria-expanded={open}
-        className="rounded-full p-1.5 text-stone-400 transition hover:bg-stone-100 hover:text-stone-700"
+        className="rounded-full p-2 text-stone-400 transition hover:bg-stone-100 hover:text-stone-700 min-h-[36px] min-w-[36px] flex items-center justify-center"
       >
         <MoreHorizontal className="h-4 w-4" />
       </button>

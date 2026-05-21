@@ -17,7 +17,7 @@ export default function SearchBar({ value, onChange }: SearchBarProps) {
         onChange={e => onChange(e.target.value)}
         placeholder="Search spots..."
         aria-label="Search spots"
-        className="w-full rounded-2xl border border-stone-200 bg-white py-2.5 pl-10 pr-10 text-sm outline-none transition focus:border-stone-400 focus:ring-2 focus:ring-stone-400/10"
+        className="w-full rounded-2xl border border-stone-200 bg-white py-2.5 pl-10 pr-10 text-sm outline-none transition focus:border-stone-400 focus:ring-2 focus:ring-stone-400/10 min-h-[44px]"
       />
       {value && (
         <button

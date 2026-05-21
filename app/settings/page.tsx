@@ -69,7 +69,7 @@ export default function SettingsPage() {
             {tabs.map(t => (
               <button key={t.id} onClick={() => setActiveTab(t.id)}
                 className={cn(
-                  'flex items-center gap-2 rounded-2xl border px-4 py-2 text-sm font-medium transition',
+                  'flex items-center gap-2 rounded-2xl border px-4 py-2.5 text-sm font-medium transition min-h-[44px]',
                   activeTab === t.id
                     ? 'border-stone-900 bg-stone-900 text-white'
                     : 'border-stone-200 bg-white text-stone-600 hover:bg-stone-50'

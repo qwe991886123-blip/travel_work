@@ -31,7 +31,7 @@ export default function DetailPanel({ spot, onClose }: DetailPanelProps) {
         )}
         <button
           onClick={onClose}
-          className="absolute right-3 top-3 rounded-full bg-white/90 p-2 shadow-sm backdrop-blur-sm transition hover:bg-white xl:hidden"
+          className="absolute right-3 top-3 rounded-full bg-white/90 p-2.5 shadow-sm backdrop-blur-sm transition hover:bg-white xl:hidden min-h-[44px] min-w-[44px] flex items-center justify-center"
           aria-label="Close detail panel"
         >
           <X className="h-4 w-4 text-stone-700" />
@@ -119,7 +119,7 @@ export default function DetailPanel({ spot, onClose }: DetailPanelProps) {
       <div className="flex-shrink-0 border-t border-stone-200 p-5">
         <button
           onClick={() => router.push(`/spots/${spot.id}`)}
-          className="w-full rounded-2xl bg-stone-900 py-3 text-sm font-medium text-white transition hover:opacity-90"
+          className="w-full rounded-2xl bg-stone-900 py-3.5 text-sm font-medium text-white transition hover:opacity-90 min-h-[48px]"
         >
           Open Full Page →
         </button>

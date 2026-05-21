@@ -61,7 +61,7 @@ export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
   if (toasts.length === 0) return null
   return (
     <div
-      className="fixed bottom-6 left-1/2 z-[9999] flex -translate-x-1/2 flex-col items-center gap-2"
+      className="fixed bottom-6 left-1/2 z-[9999] flex -translate-x-1/2 flex-col items-center gap-2 pb-safe w-[calc(100%-2rem)] max-w-sm sm:w-auto"
       aria-label="Notifications"
     >
       {toasts.map(t => (

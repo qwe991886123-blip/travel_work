@@ -94,13 +94,13 @@ export default function WorkspacePage() {
 
               <div className="flex items-center gap-2">
                 <Link href="/settings"
-                  className="flex items-center gap-1.5 rounded-2xl border border-stone-200 bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition hover:bg-stone-50">
+                  className="flex items-center gap-1.5 rounded-2xl border border-stone-200 bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition hover:bg-stone-50 min-h-[44px]">
                   <Settings className="h-4 w-4" />
                   <span className="hidden sm:inline">Settings</span>
                 </Link>
                 <button
                   onClick={() => { setEditingSpot(undefined); setModalOpen(true) }}
-                  className="flex items-center gap-2 rounded-2xl bg-stone-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90 sm:px-5 sm:py-3">
+                  className="flex items-center gap-2 rounded-2xl bg-stone-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90 sm:px-5 sm:py-3 min-h-[44px]">
                   <Plus className="h-4 w-4" />
                   <span className="hidden sm:inline">Add Spot</span>
                 </button>
