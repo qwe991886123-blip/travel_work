@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { Plus, Pencil, Trash2, Check, X, Loader2, Globe } from 'lucide-react'
 import { useRegions, useCreateRegion, useUpdateRegion, useDeleteRegion } from '@/hooks/useData'
+import { useToast } from '@/hooks/useToast'
+import { ToastContainer } from '@/components/Toast'
 import DeleteConfirmDialog from '@/components/DeleteConfirmDialog'
 import type { Region } from '@/types'
 
@@ -40,7 +42,9 @@ function InlineEdit({ value, subValue, onSave, onCancel, isPending }: InlineEdit
           aria-label="Save">
           {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
         </button>
-        <button onClick={onCancel} className="rounded-lg p-1.5 text-stone-400 transition hover:bg-stone-100" aria-label="Cancel">
+        <button onClick={onCancel}
+          className="rounded-lg p-1.5 text-stone-400 transition hover:bg-stone-100"
+          aria-label="Cancel">
           <X className="h-4 w-4" />
         </button>
       </div>
@@ -88,8 +92,9 @@ export default function RegionManager() {
   const createRegion = useCreateRegion()
   const updateRegion = useUpdateRegion()
   const deleteRegion = useDeleteRegion()
+  const { toasts, show: showToast, dismiss } = useToast()
 
-  const [editingId, setEditingId]   = useState<string | null>(null)
+  const [editingId, setEditingId]         = useState<string | null>(null)
   const [deletingRegion, setDeletingRegion] = useState<Region | null>(null)
 
   const grouped = (regions ?? []).reduce<Record<string, Region[]>>((acc, r) => {
@@ -101,7 +106,6 @@ export default function RegionManager() {
 
   return (
     <div className="space-y-5">
-      {/* Header */}
       <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
           <Globe className="h-4 w-4 text-stone-600" />
@@ -114,13 +118,17 @@ export default function RegionManager() {
 
       {isLoading ? (
         <div className="space-y-2">
-          {[1,2,3].map(i => <div key={i} className="h-11 animate-pulse rounded-2xl bg-stone-100" />)}
+          {[1, 2, 3].map(i => (
+            <div key={i} className="h-11 animate-pulse rounded-2xl bg-stone-100" />
+          ))}
         </div>
       ) : (
         <div className="space-y-6">
           {Object.entries(grouped).map(([country, items]) => (
             <div key={country}>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-stone-400">{country}</p>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-stone-400">
+                {country}
+              </p>
               <div className="space-y-2">
                 {items.map(r => (
                   <div key={r.id}>
@@ -130,9 +138,13 @@ export default function RegionManager() {
                         subValue={r.country ?? ''}
                         isPending={updateRegion.isPending}
                         onSave={(name, country) =>
-                          updateRegion.mutate({ id: r.id, data: { name, country } }, {
-                            onSuccess: () => setEditingId(null),
-                          })
+                          updateRegion.mutate(
+                            { id: r.id, data: { name, country } },
+                            {
+                              onSuccess: () => { setEditingId(null); showToast('Region updated') },
+                              onError:   () => showToast('Failed to update region', 'error'),
+                            },
+                          )
                         }
                         onCancel={() => setEditingId(null)}
                       />
@@ -167,22 +179,35 @@ export default function RegionManager() {
         </div>
       )}
 
-      {/* Add row */}
       <AddRow
         isPending={createRegion.isPending}
-        onSave={(name, country) => createRegion.mutate({ name, country })}
+        onSave={(name, country) =>
+          createRegion.mutate(
+            { name, country },
+            {
+              onSuccess: () => showToast('Region added'),
+              onError:   () => showToast('Failed to add region', 'error'),
+            },
+          )
+        }
       />
 
-      {/* Delete confirm */}
       {deletingRegion && (
         <DeleteConfirmDialog
           title={`Delete "${deletingRegion.name}"?`}
           description="This will remove the region. Spots in this region will become unlinked."
           isPending={deleteRegion.isPending}
-          onConfirm={() => deleteRegion.mutate(deletingRegion.id, { onSuccess: () => setDeletingRegion(null) })}
+          onConfirm={() =>
+            deleteRegion.mutate(deletingRegion.id, {
+              onSuccess: () => { setDeletingRegion(null); showToast('Region deleted') },
+              onError:   () => { setDeletingRegion(null); showToast('Failed to delete region', 'error') },
+            })
+          }
           onCancel={() => setDeletingRegion(null)}
         />
       )}
+
+      <ToastContainer toasts={toasts} onDismiss={dismiss} />
     </div>
   )
 }

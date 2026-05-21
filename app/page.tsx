@@ -5,6 +5,7 @@ import { Plus, Settings } from 'lucide-react'
 import Link from 'next/link'
 import type { Spot, SavedViewFilters } from '@/types'
 import { useSpots, useSoftDeleteSpot } from '@/hooks/useSpots'
+import { useToast } from '@/hooks/useToast'
 import SpotCard from '@/features/spots/components/SpotCard'
 import SpotCardSkeleton from '@/features/spots/components/SpotCardSkeleton'
 import DetailPanel from '@/features/spots/components/DetailPanel'
@@ -12,21 +13,21 @@ import SavedViewTabs from '@/features/views/components/SavedViewTabs'
 import SpotFormModal from '@/features/spots/components/SpotFormModal'
 import DeleteConfirmDialog from '@/components/DeleteConfirmDialog'
 import SearchBar from '@/components/SearchBar'
+import { ToastContainer } from '@/components/Toast'
 
 export default function WorkspacePage() {
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null)
   const [activeViewId, setActiveViewId] = useState<string | null>(null)
   const [filters, setFilters]           = useState<SavedViewFilters>({})
   const [search, setSearch]             = useState('')
-
-  // Modal state
-  const [modalOpen, setModalOpen]         = useState(false)
-  const [editingSpot, setEditingSpot]     = useState<Spot | undefined>(undefined)
-  const [deletingSpot, setDeletingSpot]   = useState<Spot | null>(null)
+  const [modalOpen, setModalOpen]       = useState(false)
+  const [editingSpot, setEditingSpot]   = useState<Spot | undefined>(undefined)
+  const [deletingSpot, setDeletingSpot] = useState<Spot | null>(null)
 
   const activeFilters: SavedViewFilters = { ...filters, search: search || undefined }
   const { data: spots, isLoading, error } = useSpots(activeFilters)
   const softDelete = useSoftDeleteSpot()
+  const { toasts, show: showToast, dismiss } = useToast()
 
   const handleViewChange = useCallback((id: string | null, viewFilters: SavedViewFilters) => {
     setActiveViewId(id)
@@ -56,8 +57,13 @@ export default function WorkspacePage() {
     if (!deletingSpot) return
     softDelete.mutate(deletingSpot.id, {
       onSuccess: () => {
+        showToast(`"${deletingSpot.title}" deleted`)
         setDeletingSpot(null)
         if (selectedSpot?.id === deletingSpot.id) setSelectedSpot(null)
+      },
+      onError: () => {
+        showToast('Failed to delete spot', 'error')
+        setDeletingSpot(null)
       },
     })
   }
@@ -88,22 +94,19 @@ export default function WorkspacePage() {
 
               <div className="flex items-center gap-2">
                 <Link href="/settings"
-                  className="flex items-center gap-1.5 rounded-2xl border border-stone-200 bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition hover:bg-stone-50"
-                  aria-label="Settings">
+                  className="flex items-center gap-1.5 rounded-2xl border border-stone-200 bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition hover:bg-stone-50">
                   <Settings className="h-4 w-4" />
                   <span className="hidden sm:inline">Settings</span>
                 </Link>
                 <button
                   onClick={() => { setEditingSpot(undefined); setModalOpen(true) }}
-                  className="flex items-center gap-2 rounded-2xl bg-stone-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90 sm:px-5 sm:py-3"
-                  aria-label="Add new spot">
+                  className="flex items-center gap-2 rounded-2xl bg-stone-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90 sm:px-5 sm:py-3">
                   <Plus className="h-4 w-4" />
                   <span className="hidden sm:inline">Add Spot</span>
                 </button>
               </div>
             </div>
 
-            {/* Search + views */}
             <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
               <div className="w-full sm:w-64">
                 <SearchBar value={search} onChange={setSearch} />
@@ -131,14 +134,22 @@ export default function WorkspacePage() {
             ) : !spots || spots.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-24 text-center">
                 <div className="text-6xl">🗺️</div>
-                <h2 className="mt-5 text-lg font-semibold text-stone-700">No spots yet</h2>
-                <p className="mt-2 text-sm text-stone-400">Start collecting places you want to visit.</p>
-                <button
-                  onClick={() => { setEditingSpot(undefined); setModalOpen(true) }}
-                  className="mt-6 flex items-center gap-2 rounded-2xl bg-stone-900 px-5 py-3 text-sm font-medium text-white transition hover:opacity-90">
-                  <Plus className="h-4 w-4" />
-                  Add your first spot
-                </button>
+                <h2 className="mt-5 text-lg font-semibold text-stone-700">
+                  {search || filters.region ? 'No spots found' : 'No spots yet'}
+                </h2>
+                <p className="mt-2 text-sm text-stone-400">
+                  {search || filters.region
+                    ? 'Try a different search or filter.'
+                    : 'Start collecting places you want to visit.'}
+                </p>
+                {!search && !filters.region && (
+                  <button
+                    onClick={() => { setEditingSpot(undefined); setModalOpen(true) }}
+                    className="mt-6 flex items-center gap-2 rounded-2xl bg-stone-900 px-5 py-3 text-sm font-medium text-white transition hover:opacity-90">
+                    <Plus className="h-4 w-4" />
+                    Add your first spot
+                  </button>
+                )}
               </div>
             ) : (
               <div className={`grid grid-cols-1 gap-6 sm:grid-cols-2 ${panelOpen ? 'xl:grid-cols-2' : 'xl:grid-cols-4'} transition-all duration-300`}>
@@ -186,6 +197,8 @@ export default function WorkspacePage() {
         <SpotFormModal
           spot={editingSpot}
           onClose={handleModalClose}
+          onSuccess={(msg) => showToast(msg)}
+          onError={(msg) => showToast(msg, 'error')}
         />
       )}
 
@@ -193,12 +206,15 @@ export default function WorkspacePage() {
       {deletingSpot && (
         <DeleteConfirmDialog
           title={`Delete "${deletingSpot.title}"?`}
-          description="This spot will be removed from your workspace. This action cannot be undone."
+          description="This spot will be removed from your workspace."
           isPending={softDelete.isPending}
           onConfirm={confirmDelete}
           onCancel={() => setDeletingSpot(null)}
         />
       )}
+
+      {/* ── Toast notifications ──────────────────────────────────────── */}
+      <ToastContainer toasts={toasts} onDismiss={dismiss} />
     </div>
   )
 }

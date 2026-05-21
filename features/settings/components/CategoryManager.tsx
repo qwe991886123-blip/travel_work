@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { Plus, Pencil, Trash2, Check, X, Loader2, Tag } from 'lucide-react'
 import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from '@/hooks/useData'
+import { useToast } from '@/hooks/useToast'
+import { ToastContainer } from '@/components/Toast'
 import DeleteConfirmDialog from '@/components/DeleteConfirmDialog'
 import type { Category } from '@/types'
 
@@ -40,7 +42,9 @@ function InlineEdit({ icon, name, onSave, onCancel, isPending }: InlineEditProps
           aria-label="Save">
           {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
         </button>
-        <button onClick={onCancel} className="rounded-lg p-1.5 text-stone-400 transition hover:bg-stone-100" aria-label="Cancel">
+        <button onClick={onCancel}
+          className="rounded-lg p-1.5 text-stone-400 transition hover:bg-stone-100"
+          aria-label="Cancel">
           <X className="h-4 w-4" />
         </button>
       </div>
@@ -62,8 +66,8 @@ interface AddRowProps {
 }
 
 function AddRow({ onSave, isPending }: AddRowProps) {
-  const [name, setName] = useState('')
-  const [icon, setIcon] = useState('')
+  const [name, setName]         = useState('')
+  const [icon, setIcon]         = useState('')
   const [showEmoji, setShowEmoji] = useState(false)
 
   const handleSave = () => {
@@ -109,13 +113,13 @@ export default function CategoryManager() {
   const createCategory = useCreateCategory()
   const updateCategory = useUpdateCategory()
   const deleteCategory = useDeleteCategory()
+  const { toasts, show: showToast, dismiss } = useToast()
 
-  const [editingId, setEditingId]           = useState<string | null>(null)
+  const [editingId, setEditingId]             = useState<string | null>(null)
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(null)
 
   return (
     <div className="space-y-5">
-      {/* Header */}
       <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
           <Tag className="h-4 w-4 text-stone-600" />
@@ -127,8 +131,10 @@ export default function CategoryManager() {
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-2">
-          {[1,2,3,4].map(i => <div key={i} className="h-11 animate-pulse rounded-2xl bg-stone-100" />)}
+        <div className="space-y-2">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="h-11 animate-pulse rounded-2xl bg-stone-100" />
+          ))}
         </div>
       ) : (
         <div className="space-y-2">
@@ -140,9 +146,13 @@ export default function CategoryManager() {
                   name={cat.name}
                   isPending={updateCategory.isPending}
                   onSave={(name, icon) =>
-                    updateCategory.mutate({ id: cat.id, data: { name, icon } }, {
-                      onSuccess: () => setEditingId(null),
-                    })
+                    updateCategory.mutate(
+                      { id: cat.id, data: { name, icon } },
+                      {
+                        onSuccess: () => { setEditingId(null); showToast('Category updated') },
+                        onError:   () => showToast('Failed to update category', 'error'),
+                      },
+                    )
                   }
                   onCancel={() => setEditingId(null)}
                 />
@@ -177,22 +187,35 @@ export default function CategoryManager() {
         </div>
       )}
 
-      {/* Add row */}
       <AddRow
         isPending={createCategory.isPending}
-        onSave={(name, icon) => createCategory.mutate({ name, icon })}
+        onSave={(name, icon) =>
+          createCategory.mutate(
+            { name, icon },
+            {
+              onSuccess: () => showToast('Category added'),
+              onError:   () => showToast('Failed to add category', 'error'),
+            },
+          )
+        }
       />
 
-      {/* Delete confirm */}
       {deletingCategory && (
         <DeleteConfirmDialog
           title={`Delete "${deletingCategory.name}"?`}
           description="This will remove the category from all spots."
           isPending={deleteCategory.isPending}
-          onConfirm={() => deleteCategory.mutate(deletingCategory.id, { onSuccess: () => setDeletingCategory(null) })}
+          onConfirm={() =>
+            deleteCategory.mutate(deletingCategory.id, {
+              onSuccess: () => { setDeletingCategory(null); showToast('Category deleted') },
+              onError:   () => { setDeletingCategory(null); showToast('Failed to delete category', 'error') },
+            })
+          }
           onCancel={() => setDeletingCategory(null)}
         />
       )}
+
+      <ToastContainer toasts={toasts} onDismiss={dismiss} />
     </div>
   )
 }

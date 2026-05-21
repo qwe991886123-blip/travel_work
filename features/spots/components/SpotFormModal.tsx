@@ -16,9 +16,11 @@ interface SpotFormModalProps {
   /** When provided, we're editing an existing spot */
   spot?: Spot
   onClose: () => void
+  onSuccess?: (message: string) => void
+  onError?: (message: string) => void
 }
 
-export default function SpotFormModal({ spot, onClose }: SpotFormModalProps) {
+export default function SpotFormModal({ spot, onClose, onSuccess, onError }: SpotFormModalProps) {
   const isEditing = !!spot
   const { data: regions } = useRegions()
   const { data: categories } = useCategories()
@@ -89,12 +91,18 @@ export default function SpotFormModal({ spot, onClose }: SpotFormModalProps) {
 
   const onSubmit = async (values: SpotFormValues) => {
     const payload = { ...values, cover_image: coverImage }
-    if (isEditing && spot) {
-      await updateSpot.mutateAsync({ id: spot.id, data: payload })
-    } else {
-      await createSpot.mutateAsync(payload)
+    try {
+      if (isEditing && spot) {
+        await updateSpot.mutateAsync({ id: spot.id, data: payload })
+        onSuccess?.('Spot updated')
+      } else {
+        await createSpot.mutateAsync(payload)
+        onSuccess?.('Spot saved')
+      }
+      onClose()
+    } catch {
+      onError?.(isEditing ? 'Failed to update spot' : 'Failed to save spot')
     }
-    onClose()
   }
 
   const isPending = isSubmitting || createSpot.isPending || updateSpot.isPending
